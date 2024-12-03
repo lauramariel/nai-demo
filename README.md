@@ -27,7 +27,12 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
    ```bash
    docker compose up
    ```
-6. To stop the application, press `Control + C`.
+6. Open your web browser and navigate to:
+   ```
+   http://localhost:8000
+   ```
+   This will open the demo application interface.
+7. To stop the application, press `Control + C`.
 
 ## Running on Linux (Ubuntu)
 
