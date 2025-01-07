@@ -4,11 +4,11 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
 
 ## Running on macOS
 
-### Requirements
+### macOS Requirements
 
 - Install Rancher Desktop. Follow the installation guide [here](https://docs.rancherdesktop.io/getting-started/installation/).
 
-### Instructions
+### macOS Instructions
 
 1. Open your terminal.
 2. Clone the repository:
@@ -36,7 +36,7 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
 
 ## Running on Linux (Ubuntu)
 
-### Requirements
+### Linux Requirements
 
 - Install Docker using the following commands:
   ```bash
@@ -48,10 +48,19 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
   sudo usermod -aG docker ${USER}
   ```
 
-### Instructions
+### Linux Instructions
 
-- Follow the same instructions as for macOS to run the application.
+- Follow the [macOS instructions](#macos-instructions) to run the application.
 
 ## Running on Windows
 
-**Note:** Instructions for Windows are a work in progress. Please check back later for updates.
+### Windows Requirements
+
+- Install Windows Subsystem for Linux (WSL). Follow the installation guide [here](https://learn.microsoft.com/en-us/windows/wsl/install).
+
+### Windows Instructions
+
+1.	Install WSL from an admin command/Powershell prompt by running wsl –install
+2.	Once installed and rebooted, open WSL and follow the instructions for [installing Docker on Linux.](#linux-requirements)
+3.	Exit WSL to allow the group change to take effect. 
+4.	Open WSL and continue with the [macOS instructions](#macos-instructions) to run the application.
