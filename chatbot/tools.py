@@ -1,4 +1,5 @@
 import json
+import requests
 import streamlit as st
 import logging
 import re
@@ -7,6 +8,55 @@ from decouple import config
 
 logging.basicConfig(level=config('LOG_LEVEL', default='INFO'))
 logger = logging.getLogger(__name__)
+
+
+def fetch_available_models(api_endpoint, api_key):
+    """Fetch available models from the OpenAI endpoint"""
+    try:
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }
+        
+        # Construct the models endpoint URL
+        if api_endpoint.endswith('/'):
+            models_url = f"{api_endpoint}models"
+        else:
+            models_url = f"{api_endpoint}/models"
+        
+        response = requests.get(models_url, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            models = [model['id'] for model in data.get('data', [])]
+            # Sort models alphabetically for better UX
+            models.sort()
+            return models
+        elif response.status_code == 401:
+            st.error("Authentication failed. Please check your API key.")
+            return []
+        elif response.status_code == 404:
+            st.error("Models endpoint not found. Please check your API endpoint URL.")
+            return []
+        else:
+            st.error(f"Failed to fetch models: {response.status_code} - {response.text}")
+            return []
+            
+    except requests.exceptions.ConnectionError:
+        st.error("Connection failed. Please check your API endpoint URL and internet connection.")
+        return []
+    except requests.exceptions.Timeout:
+        st.error("Request timed out. Please try again.")
+        return []
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error connecting to API: {str(e)}")
+        return []
+    except json.JSONDecodeError as e:
+        st.error(f"Error parsing response: {str(e)}")
+        return []
+    except Exception as e:
+        st.error(f"Unexpected error: {str(e)}")
+        return []
 
 
 def load_file_text(filename):

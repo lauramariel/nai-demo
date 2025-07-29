@@ -5,7 +5,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain.callbacks.base import BaseCallbackHandler
 import os
 from decouple import config
-from tools import load_system_messages
+from tools import load_system_messages, fetch_available_models
 
 
 class StreamHandler(BaseCallbackHandler):
@@ -22,8 +22,59 @@ system_messages = load_system_messages()
 # Sidebar for user input
 st.sidebar.header('Configuration')
 api_endpoint = st.sidebar.text_input('API Endpoint URL', value=config('API_ENDPOINT', default='https://ai.nutanix.com/api/v1'))
-model_name = st.sidebar.text_input('Model Name', value=config('MODEL_NAME', default='vllm-llama-3-1'))
+
+# Clean up API endpoint - remove /chat/completions if present
+if api_endpoint and api_endpoint.endswith('/chat/completions'):
+    api_endpoint = api_endpoint[:-len('/chat/completions')]
+
 api_key = st.sidebar.text_input('API Key', type='password', value=config('API_KEY', default=''))
+
+# Dynamic model selection with API integration
+if api_endpoint and api_key:
+    # Initialize session state for cached models
+    if 'cached_models' not in st.session_state:
+        st.session_state.cached_models = []
+        st.session_state.models_fetched = False
+        st.session_state.last_endpoint = ""
+        st.session_state.last_api_key = ""
+    
+    # Check if we need to refresh models (endpoint or key changed)
+    if (st.session_state.last_endpoint != api_endpoint or 
+        st.session_state.last_api_key != api_key or 
+        not st.session_state.models_fetched):
+        
+        with st.sidebar:
+            with st.spinner("Fetching available models..."):
+                st.session_state.cached_models = fetch_available_models(api_endpoint, api_key)
+                st.session_state.models_fetched = True
+                st.session_state.last_endpoint = api_endpoint
+                st.session_state.last_api_key = api_key
+    
+    # Use available models or fallback to default
+    available_models = st.session_state.cached_models
+    if available_models:
+        # Default selection
+        default_model = config('MODEL_NAME', default='vllm-llama-3-1')
+        default_index = 0
+        if default_model in available_models:
+            default_index = available_models.index(default_model)
+        
+        # Model selection dropdown
+        model_name = st.sidebar.selectbox(
+            "Select Endpoint:",
+            options=available_models,
+            index=default_index,
+            help="Choose from available endpoints"
+        )
+    else:
+        st.sidebar.warning("No models found. Please check your API credentials.")
+        model_name = config('MODEL_NAME', default='vllm-llama-3-1')
+        
+else:
+    # Fallback when API credentials are not available
+    st.sidebar.info("💡 Provide API Endpoint and API Key above to see available models")
+    model_name = config('MODEL_NAME', default='vllm-llama-3-1')
+
 temperature = st.sidebar.slider(
     "Select Temperature for Chatbot:",
     min_value=0.0,
