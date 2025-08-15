@@ -56,9 +56,12 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
 
 ### Linux Requirements (Rocky)
 ```bash
-sudo dnf check-update
+sudo dnf -y install dnf-plugins-core
 sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-sudo dnf install docker-compose-plugin
+sudo dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
 ```
 
 ### Linux Instructions
