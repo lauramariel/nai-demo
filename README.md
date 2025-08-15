@@ -1,4 +1,4 @@
-Nutanix AI Demo Application
+# Nutanix AI Demo Application
 
 This is a demo application for Nutanix AI. Follow the instructions below to set up and run the application on your system.
 
