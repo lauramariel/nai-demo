@@ -40,9 +40,9 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
    This will open the demo application interface.
 8.  To stop the application, press `Control + C`.
 
-## Running on Linux (Ubuntu)
+## Running on Linux 
 
-### Linux Requirements
+### Linux Requirements (Ubuntu)
 
 - Install Docker using the following commands:
   ```bash
@@ -53,6 +53,13 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
   sudo apt -y install docker-ce
   sudo usermod -aG docker ${USER}
   ```
+
+### Linux Requirements (Rocky)
+```bash
+sudo dnf check-update
+sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf install docker-compose-plugin
+```
 
 ### Linux Instructions
 
