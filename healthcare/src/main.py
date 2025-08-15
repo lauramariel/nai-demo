@@ -212,7 +212,7 @@ def main():
             model_name = st.text_input(
                 "Endpoint Name", 
                 placeholder="Enter the endpoint name",
-                value="llamavision"
+                value="llama-vision"
             )
 
             api_key = st.text_input('API Key', type='password', value=config('API_KEY', default=''))

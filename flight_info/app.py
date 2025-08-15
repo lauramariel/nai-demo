@@ -113,7 +113,7 @@ def get_flight_info(query: str) -> str:
 st.sidebar.header("Configuration")
 api_endpoint = st.sidebar.text_input('API Endpoint URL', value=config('API_ENDPOINT', default='https://nai.tmelab.net/api/v1'))
 
-model_name = st.sidebar.text_input('Model Name', value=config('MODEL_NAME', default='vllm-llama-3-1'))
+model_name = st.sidebar.text_input('Model Name', value=config('MODEL_NAME', default='llama-vision-llama-3-1'))
 api_key = st.sidebar.text_input('API Key', type='password', value=config('API_KEY', default=''))
 debug_mode = False
 

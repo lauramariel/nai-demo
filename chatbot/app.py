@@ -53,7 +53,7 @@ if api_endpoint and api_key:
     available_models = st.session_state.cached_models
     if available_models:
         # Default selection
-        default_model = config('MODEL_NAME', default='vllm-llama-3-1')
+        default_model = config('MODEL_NAME', default='llama-vision-llama-3-1')
         default_index = 0
         if default_model in available_models:
             default_index = available_models.index(default_model)
@@ -67,12 +67,12 @@ if api_endpoint and api_key:
         )
     else:
         st.sidebar.warning("No models found. Please check your API credentials.")
-        model_name = config('MODEL_NAME', default='vllm-llama-3-1')
+        model_name = config('MODEL_NAME', default='llama-vision-llama-3-1')
         
 else:
     # Fallback when API credentials are not available
     st.sidebar.info("💡 Provide API Endpoint and API Key above to see available models")
-    model_name = config('MODEL_NAME', default='vllm-llama-3-1')
+    model_name = config('MODEL_NAME', default='llama-vision-llama-3-1')
 
 temperature = st.sidebar.slider(
     "Select Temperature for Chatbot:",

@@ -13,34 +13,31 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
 1. Open your terminal.
 2. Clone the repository:
    ```bash
-   git clone https://github.com/halsayed/nai-demo.git
+   git clone https://github.com/lauramariel/nai-demo.git
    ```
 3. Navigate to the project directory:
    ```bash
    cd nai-demo
    ```
-4. (Optional) Set your API key so it is the default used
+4. (Optional) Update sample.env with your API key. Copy this file to `.env`
 
-   ```
-   export API_KEY='xxx'
+   ```bash
+   cp sample.env .env
    ```
 
-5. Build the Docker containers:
+5. Build the Docker containers and start the application:
    ```bash
-   docker compose build
+   bash start.sh local
    ```
-6. Start the application:
-   ```bash
-   docker compose up
-   ```
-7. Open your web browser and navigate to:
+
+6. Open your web browser and navigate to:
    ```
    http://localhost:8000
    ```
    This will open the demo application interface.
-8.  To stop the application, press `Control + C`.
+7.  To stop the application, press `Control + C`.
 
-## Running on Linux 
+## Running on Linux
 
 ### Linux Requirements (Ubuntu)
 
@@ -80,3 +77,23 @@ sudo usermod -aG docker $USER
 2.	Once installed and rebooted, open WSL and follow the instructions for [installing Docker on Linux.](#linux-requirements)
 3.	Exit WSL to allow the group change to take effect. 
 4.	Open WSL and continue with the [macOS instructions](#macos-instructions) to run the application.
+
+## Running on a VM
+
+To run this on a VM with SSL and certificates:
+
+1. Update nginx.conf with your hostname
+2. Update .env with your path to certificates
+3. Run the start script
+
+   ```bash
+   bash start.sh prod
+   ```
+
+## Stop the application
+
+To stop the application run
+
+```bash
+bash stop.sh [local|prod]
+```
