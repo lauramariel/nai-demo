@@ -19,20 +19,26 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
    ```bash
    cd nai-demo
    ```
-4. Build the Docker containers:
+4. (Optional) Set your API key so it is the default used
+
+   ```
+   export API_KEY='xxx'
+   ```
+
+5. Build the Docker containers:
    ```bash
    docker compose build
    ```
-5. Start the application:
+6. Start the application:
    ```bash
    docker compose up
    ```
-6. Open your web browser and navigate to:
+7. Open your web browser and navigate to:
    ```
    http://localhost:8000
    ```
    This will open the demo application interface.
-7. To stop the application, press `Control + C`.
+8.  To stop the application, press `Control + C`.
 
 ## Running on Linux (Ubuntu)
 

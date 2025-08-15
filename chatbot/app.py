@@ -21,14 +21,13 @@ system_messages = load_system_messages()
 
 # Sidebar for user input
 st.sidebar.header('Configuration')
-api_endpoint = st.sidebar.text_input('API Endpoint URL', value=config('API_ENDPOINT', default='https://ai.nutanix.com/api/v1'))
+api_endpoint = st.sidebar.text_input('API Endpoint URL', value=config('API_ENDPOINT', default='https://nai.tmelab.net/api/v1'))
 
 # Clean up API endpoint - remove /chat/completions if present
 if api_endpoint and api_endpoint.endswith('/chat/completions'):
     api_endpoint = api_endpoint[:-len('/chat/completions')]
 
 api_key = st.sidebar.text_input('API Key', type='password', value=config('API_KEY', default=''))
-
 # Dynamic model selection with API integration
 if api_endpoint and api_key:
     # Initialize session state for cached models
@@ -109,7 +108,7 @@ st.title("AI Chatbot")
 # logo
 logo_path = './ntnx_logo.png'
 if os.path.exists(logo_path):
-    st.image(logo_path, width=200)
+    st.image(logo_path)
 else:
     st.warning("Logo file not found. Please ensure 'ntnx_logo.png' is in the same directory as this script.")
 

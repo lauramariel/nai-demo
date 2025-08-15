@@ -1,0 +1,8 @@
+streamlit
+requests
+Pillow
+opencv-python
+numpy
+python-decouple
+python-dotenv
+filetype

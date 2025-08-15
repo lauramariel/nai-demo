@@ -11,6 +11,20 @@ services:
   
   flight:
     build: ./flight_info
+    environment:
+      - API_KEY=${API_KEY}
   
   chat:
     build: ./chatbot
+    environment:
+      - API_KEY=${API_KEY}
+
+  ocr:
+    build: ./ocr
+    environment:
+      - API_KEY=${API_KEY}
+
+  healthcare:
+    build: ./healthcare
+    environment:
+      - API_KEY=${API_KEY}
