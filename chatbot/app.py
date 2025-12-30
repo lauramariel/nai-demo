@@ -21,7 +21,7 @@ system_messages = load_system_messages()
 
 # Sidebar for user input
 st.sidebar.header('Configuration')
-api_endpoint = st.sidebar.text_input('API Endpoint URL', value=config('API_ENDPOINT', default='https://nai.tmelab.net/api/v1'))
+api_endpoint = st.sidebar.text_input('API Endpoint URL', value=config('API_ENDPOINT', default=''))
 
 # Clean up API endpoint - remove /chat/completions if present
 if api_endpoint and api_endpoint.endswith('/chat/completions'):

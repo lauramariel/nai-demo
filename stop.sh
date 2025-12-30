@@ -1,3 +1,5 @@
+set -euo pipefail
+
 if [ "$1" = "local" ]; then
 	docker compose  down
 elif [ "$1" = "prod" ]; then

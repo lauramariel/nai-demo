@@ -19,7 +19,7 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
    ```bash
    cd nai-demo
    ```
-4. (Optional) Update sample.env with your API key. Copy this file to `.env`
+4. (Optional) Update `sample.env` with your API and URL information and save to `.env`. This way, the apps will have your information pre-populated.
 
    ```bash
    cp sample.env .env

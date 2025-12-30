@@ -13,18 +13,22 @@ services:
     build: ./flight_info
     environment:
       - API_KEY=${API_KEY}
+      - API_ENDPOINT=${BASE_URL}
   
   chat:
     build: ./chatbot
     environment:
       - API_KEY=${API_KEY}
+      - API_ENDPOINT=${BASE_URL}
 
   ocr:
     build: ./ocr
     environment:
       - API_KEY=${API_KEY}
+      - API_ENDPOINT=${BASE_URL}
 
   healthcare:
     build: ./healthcare
     environment:
       - API_KEY=${API_KEY}
+      - API_ENDPOINT=${BASE_URL}

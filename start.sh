@@ -1,5 +1,11 @@
+set -euo pipefail
+
+if [[ -f ".env" ]]; then
+	source .env
+fi
+
 if [ "$1" = "local" ]; then
-	docker compose  build
+	docker compose build
 	docker compose up -d
 	echo "access at http://localhost:8000/"
 elif [ "$1" = "prod" ]; then
