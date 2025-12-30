@@ -35,7 +35,10 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
    http://localhost:8000
    ```
    This will open the demo application interface.
-7.  To stop the application, press `Control + C`.
+7.  To stop the application run
+      ```bash
+      bash stop.sh local
+      ```
 
 ## Running on Linux
 
