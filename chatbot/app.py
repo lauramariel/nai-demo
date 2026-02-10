@@ -1,8 +1,8 @@
 import streamlit as st
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
-from langchain.memory import ConversationBufferMemory
-from langchain.callbacks.base import BaseCallbackHandler
+# from langchain.memory import ConversationBufferMemory
+from langchain_core.callbacks import BaseCallbackHandler
 import os
 from decouple import config
 from tools import load_system_messages, fetch_available_models
@@ -21,14 +21,13 @@ system_messages = load_system_messages()
 
 # Sidebar for user input
 st.sidebar.header('Configuration')
-api_endpoint = st.sidebar.text_input('API Endpoint URL', value=config('API_ENDPOINT', default='https://ai.nutanix.com/api/v1'))
+api_endpoint = st.sidebar.text_input('API Endpoint URL', value=config('API_ENDPOINT', default=''))
 
 # Clean up API endpoint - remove /chat/completions if present
 if api_endpoint and api_endpoint.endswith('/chat/completions'):
     api_endpoint = api_endpoint[:-len('/chat/completions')]
 
 api_key = st.sidebar.text_input('API Key', type='password', value=config('API_KEY', default=''))
-
 # Dynamic model selection with API integration
 if api_endpoint and api_key:
     # Initialize session state for cached models
@@ -54,7 +53,7 @@ if api_endpoint and api_key:
     available_models = st.session_state.cached_models
     if available_models:
         # Default selection
-        default_model = config('MODEL_NAME', default='vllm-llama-3-1')
+        default_model = config('MODEL_NAME', default='llama-vision-llama-3-1')
         default_index = 0
         if default_model in available_models:
             default_index = available_models.index(default_model)
@@ -68,12 +67,12 @@ if api_endpoint and api_key:
         )
     else:
         st.sidebar.warning("No models found. Please check your API credentials.")
-        model_name = config('MODEL_NAME', default='vllm-llama-3-1')
+        model_name = config('MODEL_NAME', default='llama-vision-llama-3-1')
         
 else:
     # Fallback when API credentials are not available
     st.sidebar.info("💡 Provide API Endpoint and API Key above to see available models")
-    model_name = config('MODEL_NAME', default='vllm-llama-3-1')
+    model_name = config('MODEL_NAME', default='llama-vision-llama-3-1')
 
 temperature = st.sidebar.slider(
     "Select Temperature for Chatbot:",
@@ -109,7 +108,7 @@ st.title("AI Chatbot")
 # logo
 logo_path = './ntnx_logo.png'
 if os.path.exists(logo_path):
-    st.image(logo_path, width=200)
+    st.image(logo_path)
 else:
     st.warning("Logo file not found. Please ensure 'ntnx_logo.png' is in the same directory as this script.")
 
@@ -138,7 +137,7 @@ if required_fields_valid:
                 temperature=temperature,
                 streaming=True
             )
-            memory = ConversationBufferMemory(return_messages=True)
+            # memory = ConversationBufferMemory(return_messages=True)
 
             # Generate AI response
             messages = [
@@ -146,12 +145,12 @@ if required_fields_valid:
             ] + [HumanMessage(content=msg["content"]) if msg["role"] == "user" else AIMessage(content=msg["content"]) for msg in st.session_state.messages]
             with st.chat_message("assistant"):
                 stream_handler = StreamHandler(st.empty())
-                response = llm(messages, callbacks=[stream_handler])
-                st.session_state.messages.append({"role": "assistant", "content": stream_handler.text})
+                response = llm.invoke(messages, config={"callbacks": [stream_handler]})
+                st.session_state.messages.append({"role": "assistant", "content": response.content})
         
         except Exception as e:
             st.error("An error occurred while connecting to the API. Please check your API endpoint and credentials.")
             # Optionally log the error for debugging purposes
-            # print(e)
+            st.error(f"Error: {e}")
 
 # Run the app: streamlit run chatbot_app.py
