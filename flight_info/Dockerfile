@@ -1,14 +1,14 @@
 FROM python:3.10-slim-bullseye
  
 ENV HOST=0.0.0.0
-ENV LISTEN_PORT 8080
+ENV LISTEN_PORT=8080
 EXPOSE 8080
 
 # Set the working directory in the container
 WORKDIR /app
 
 # Install any necessary dependencies, including Streamlit
-RUN pip install --no-cache-dir langchain-community langchain-openai streamlit python-decouple
+RUN pip install --no-cache-dir langchain-community langchain-openai streamlit python-decouple langchain langchain_openai langchain_core
 
 # Copy the current directory contents into the container at /app
 COPY . /app

@@ -1,13 +1,11 @@
 import streamlit as st
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage
-from langchain.memory import ConversationBufferMemory
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain.agents import AgentType, initialize_agent
-from langchain.tools import Tool
-from typing import List, Dict
-import json
-from langchain.prompts import MessagesPlaceholder
+from langchain_classic.memory import ConversationBufferMemory
+from langchain_core.callbacks import StreamingStdOutCallbackHandler
+from langchain_classic.agents import AgentType, initialize_agent
+from langchain_core.tools import Tool
+from langchain_core.prompts import MessagesPlaceholder
 import requests
 import os
 from datetime import datetime
@@ -111,8 +109,9 @@ def get_flight_info(query: str) -> str:
 
 # Sidebar for user input
 st.sidebar.header("Configuration")
-api_endpoint = st.sidebar.text_input('API Endpoint URL', value=config('API_ENDPOINT', default='https://ai.nutanix.com/api/v1'))
-model_name = st.sidebar.text_input('Model Name', value=config('MODEL_NAME', default='vllm-llama-3-1'))
+api_endpoint = st.sidebar.text_input('API Endpoint URL', value=config('API_ENDPOINT', default='https://nai.tmelab.net/api/v1'))
+
+model_name = st.sidebar.text_input('Model Name', value=config('MODEL_NAME', default='llama-vision-llama-3-1'))
 api_key = st.sidebar.text_input('API Key', type='password', value=config('API_KEY', default=''))
 debug_mode = False
 
@@ -161,7 +160,9 @@ if required_fields_filled:
             openai_api_base=api_endpoint,
             streaming=True
         )
+        
         memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
 
         # Create the flight info tool
         flight_tool = Tool(

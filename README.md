@@ -2,7 +2,7 @@
 
 This is a demo application for Nutanix AI. Follow the instructions below to set up and run the application on your system.
 
-## Running on macOS
+## Running locally on macOS
 
 ### macOS Requirements
 
@@ -13,30 +13,36 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
 1. Open your terminal.
 2. Clone the repository:
    ```bash
-   git clone https://github.com/halsayed/nai-demo.git
+   git clone https://github.com/lauramariel/nai-demo.git
    ```
 3. Navigate to the project directory:
    ```bash
    cd nai-demo
    ```
-4. Build the Docker containers:
+4. (Optional) Update `sample.env` with your API and URL information and save to `.env`. This way, the apps will have your information pre-populated.
+
    ```bash
-   docker compose build
+   cp sample.env .env
    ```
-5. Start the application:
+
+5. Build the Docker containers and start the application:
    ```bash
-   docker compose up
+   bash start.sh local
    ```
+
 6. Open your web browser and navigate to:
    ```
    http://localhost:8000
    ```
    This will open the demo application interface.
-7. To stop the application, press `Control + C`.
+7.  To stop the application run
+      ```bash
+      bash stop.sh local
+      ```
 
-## Running on Linux (Ubuntu)
+## Running on Linux
 
-### Linux Requirements
+### Linux Requirements (Ubuntu)
 
 - Install Docker using the following commands:
   ```bash
@@ -47,6 +53,16 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
   sudo apt -y install docker-ce
   sudo usermod -aG docker ${USER}
   ```
+
+### Linux Requirements (Rocky)
+```bash
+sudo dnf -y install dnf-plugins-core
+sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+```
 
 ### Linux Instructions
 
@@ -64,3 +80,23 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
 2.	Once installed and rebooted, open WSL and follow the instructions for [installing Docker on Linux.](#linux-requirements)
 3.	Exit WSL to allow the group change to take effect. 
 4.	Open WSL and continue with the [macOS instructions](#macos-instructions) to run the application.
+
+## Running on a VM
+
+To run this on a VM with SSL and certificates:
+
+1. Update nginx.conf with your hostname
+2. Update .env with your path to certificates
+3. Run the start script
+
+   ```bash
+   bash start.sh prod
+   ```
+
+## Stop the application
+
+To stop the application run
+
+```bash
+bash stop.sh [local|prod]
+```
