@@ -17,4 +17,4 @@ COPY . /app
 ENV PYTHONUNBUFFERED=1
 
 # Run the Streamlit app
-CMD ["streamlit", "run", "app.py", "--server.port", "8080"]
+CMD ["streamlit", "run", "app.py", "--server.port", "8080",   "--server.address=0.0.0.0", "--server.baseUrlPath=chatbot"]

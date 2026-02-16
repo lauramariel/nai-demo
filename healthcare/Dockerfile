@@ -19,4 +19,4 @@ ENV PYTHONUNBUFFERED=1
 
 # Run the Streamlit app
 WORKDIR /app/src
-CMD ["streamlit", "run", "main.py", "--server.port", "8080"]
+CMD ["streamlit", "run", "main.py", "--server.port", "8080", "--server.baseUrlPath=healthcare"]
