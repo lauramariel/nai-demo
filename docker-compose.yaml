@@ -8,6 +8,10 @@ services:
     volumes:
       - ${PWD}/nginx/nginx_local.conf:/etc/nginx/nginx.conf
       - ${PWD}/nginx/www:/data/www
+    command: >
+      /bin/sh -c "chmod -R 755 /data/www &&
+                  chmod -R a+r /data/www &&
+                  nginx -g 'daemon off;'"
 
   flight:
     build: ./flight_info

@@ -12,6 +12,10 @@ services:
       - ${PATH_TO_CERTS}:/etc/nginx/ssl
     profiles:
       - prod
+    command: >
+      /bin/sh -c "chmod -R 755 /data/www &&
+                  chmod -R a+r /data/www &&
+                  nginx -g 'daemon off;'"
 
   flight:
     build: ./flight_info
