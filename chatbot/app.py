@@ -1,8 +1,8 @@
 import streamlit as st
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
-from langchain.memory import ConversationBufferMemory
-from langchain.callbacks.base import BaseCallbackHandler
+# from langchain.memory import ConversationBufferMemory
+from langchain_core.callbacks import BaseCallbackHandler
 import os
 from decouple import config
 from tools import load_system_messages, fetch_available_models
@@ -137,7 +137,7 @@ if required_fields_valid:
                 temperature=temperature,
                 streaming=True
             )
-            memory = ConversationBufferMemory(return_messages=True)
+            # memory = ConversationBufferMemory(return_messages=True)
 
             # Generate AI response
             messages = [
@@ -145,12 +145,12 @@ if required_fields_valid:
             ] + [HumanMessage(content=msg["content"]) if msg["role"] == "user" else AIMessage(content=msg["content"]) for msg in st.session_state.messages]
             with st.chat_message("assistant"):
                 stream_handler = StreamHandler(st.empty())
-                response = llm(messages, callbacks=[stream_handler])
-                st.session_state.messages.append({"role": "assistant", "content": stream_handler.text})
+                response = llm.invoke(messages, config={"callbacks": [stream_handler]})
+                st.session_state.messages.append({"role": "assistant", "content": response.content})
         
         except Exception as e:
             st.error("An error occurred while connecting to the API. Please check your API endpoint and credentials.")
             # Optionally log the error for debugging purposes
-            # print(e)
+            st.error(f"Error: {e}")
 
 # Run the app: streamlit run chatbot_app.py
