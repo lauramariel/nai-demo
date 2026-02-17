@@ -30,6 +30,11 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
    bash start.sh local
    ```
 
+   Note: To rebuild image layers, you can run
+   ```bash
+   bash start.sh local --clean
+   ```
+
 6. Open your web browser and navigate to:
    ```
    http://localhost:8000

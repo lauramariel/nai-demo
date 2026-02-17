@@ -8,7 +8,8 @@ EXPOSE 8080
 WORKDIR /app
 
 # Install any necessary dependencies, including Streamlit
-RUN pip install --no-cache-dir langchain-community langchain-openai streamlit python-decouple langchain langchain_openai langchain_core
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the current directory contents into the container at /app
 COPY . /app
@@ -17,4 +18,4 @@ COPY . /app
 ENV PYTHONUNBUFFERED=1
 
 # Run the Streamlit app
-CMD ["streamlit", "run", "app.py", "--server.port", "8080"]
+CMD ["streamlit", "run", "app.py", "--server.port", "8080", "--server.address=0.0.0.0", "--server.baseUrlPath=flight"]
