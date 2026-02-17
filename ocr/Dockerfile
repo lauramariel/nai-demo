@@ -17,4 +17,4 @@ COPY . /app
 ENV PYTHONUNBUFFERED=1
 
 # Run the Streamlit app
-CMD ["streamlit", "run", "./src/main.py", "--server.port", "8080", "--server.baseUrlPath=ocr"]
+CMD ["streamlit", "run", "./src/main.py", "--server.port", "8080", "--server.address=0.0.0.0", "--server.baseUrlPath=ocr"]
