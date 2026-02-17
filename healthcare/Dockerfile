@@ -9,7 +9,8 @@ WORKDIR /app
 
 # Install any necessary dependencies, including Streamlit
 RUN apt-get update && apt-get install -y gcc build-essential
-RUN pip install --no-cache-dir streamlit python-decouple frontend tools requests pymupdf
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the current directory contents into the container at /app
 COPY . /app
