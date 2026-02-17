@@ -8,7 +8,7 @@ EXPOSE 8080
 WORKDIR /app
 
 # Install any necessary dependencies, including Streamlit
-RUN pip install --no-cache-dir langchain-community langchain-openai streamlit python-decouple
+RUN pip install --no-cache-dir langchain-community langchain-openai streamlit python-decouple langchain langchain_openai langchain_core
 
 # Copy the current directory contents into the container at /app
 COPY . /app
