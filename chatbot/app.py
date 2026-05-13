@@ -28,51 +28,63 @@ if api_endpoint and api_endpoint.endswith('/chat/completions'):
     api_endpoint = api_endpoint[:-len('/chat/completions')]
 
 api_key = st.sidebar.text_input('API Key', type='password', value=config('API_KEY', default=''))
-# Dynamic model selection with API integration
-if api_endpoint and api_key:
-    # Initialize session state for cached models
-    if 'cached_models' not in st.session_state:
-        st.session_state.cached_models = []
-        st.session_state.models_fetched = False
-        st.session_state.last_endpoint = ""
-        st.session_state.last_api_key = ""
-    
-    # Check if we need to refresh models (endpoint or key changed)
-    if (st.session_state.last_endpoint != api_endpoint or 
-        st.session_state.last_api_key != api_key or 
-        not st.session_state.models_fetched):
-        
-        with st.sidebar:
-            with st.spinner("Fetching available models..."):
-                st.session_state.cached_models = fetch_available_models(api_endpoint, api_key)
-                st.session_state.models_fetched = True
-                st.session_state.last_endpoint = api_endpoint
-                st.session_state.last_api_key = api_key
-    
-    # Use available models or fallback to default
-    available_models = st.session_state.cached_models
-    if available_models:
-        # Default selection
-        default_model = config('MODEL_NAME', default='llama-vision-llama-3-1')
-        default_index = 0
-        if default_model in available_models:
-            default_index = available_models.index(default_model)
-        
-        # Model selection dropdown
-        model_name = st.sidebar.selectbox(
-            "Select Endpoint:",
-            options=available_models,
-            index=default_index,
-            help="Choose from available endpoints"
-        )
+
+connection_type = st.sidebar.selectbox(
+    "Connection Type:",
+    ["Local Models", "Unified Endpoints"],
+    index=0
+)
+
+if connection_type == "Local Models":
+    # Dynamic model selection with API integration
+    if api_endpoint and api_key:
+        # Initialize session state for cached models
+        if 'cached_models' not in st.session_state:
+            st.session_state.cached_models = []
+            st.session_state.models_fetched = False
+            st.session_state.last_endpoint = ""
+            st.session_state.last_api_key = ""
+
+        # Check if we need to refresh models (endpoint or key changed)
+        if (st.session_state.last_endpoint != api_endpoint or
+            st.session_state.last_api_key != api_key or
+            not st.session_state.models_fetched):
+
+            with st.sidebar:
+                with st.spinner("Fetching available models..."):
+                    st.session_state.cached_models = fetch_available_models(api_endpoint, api_key)
+                    st.session_state.models_fetched = True
+                    st.session_state.last_endpoint = api_endpoint
+                    st.session_state.last_api_key = api_key
+
+        # Use available models or fallback to default
+        available_models = st.session_state.cached_models
+        if available_models:
+            # Default selection
+            default_model = config('MODEL_NAME', default='llama-vision-llama-3-1')
+            default_index = 0
+            if default_model in available_models:
+                default_index = available_models.index(default_model)
+
+            # Model selection dropdown
+            model_name = st.sidebar.selectbox(
+                "Select Local Endpoint:",
+                options=available_models,
+                index=default_index,
+                help="Choose from available endpoints"
+            )
+        else:
+            st.sidebar.warning("No local models found. Please check your API credentials.")
+            model_name = config('MODEL_NAME', default='llama-vision-llama-3-1')
     else:
-        st.sidebar.warning("No models found. Please check your API credentials.")
+        # Fallback when API credentials are not available
+        st.sidebar.info("💡 Provide API Endpoint and API Key above to see available models")
         model_name = config('MODEL_NAME', default='llama-vision-llama-3-1')
-        
-else:
-    # Fallback when API credentials are not available
-    st.sidebar.info("💡 Provide API Endpoint and API Key above to see available models")
-    model_name = config('MODEL_NAME', default='llama-vision-llama-3-1')
+
+else:  # Unified Endpoints
+    model_name = st.sidebar.text_input('Endpoint Name', value=config('ENDPOINT_NAME', default=''))
+    api_endpoint = api_endpoint.rstrip('/v1/') + '/gateway/v1' # for unified endpoints, change endpoint from /enterpriseai/v1 to /enterpriseai/gateway/v1
+
 
 temperature = st.sidebar.slider(
     "Select Temperature for Chatbot:",
@@ -103,14 +115,16 @@ if not required_fields_valid:
     st.warning("Please fill in all required fields (API Endpoint, Model Name, and API Key) in the sidebar to enable chat.")
 
 # Main chat interface
-st.title("AI Chatbot")
 
 # logo
 logo_path = './ntnx_logo.png'
 if os.path.exists(logo_path):
-    st.image(logo_path)
+    st.logo(logo_path)
 else:
     st.warning("Logo file not found. Please ensure 'ntnx_logo.png' is in the same directory as this script.")
+
+st.title(":sparkles: AI Chatbot")
+
 
 # Initialize session state
 if "messages" not in st.session_state:
@@ -151,6 +165,6 @@ if required_fields_valid:
         except Exception as e:
             st.error("An error occurred while connecting to the API. Please check your API endpoint and credentials.")
             # Optionally log the error for debugging purposes
-            st.error(f"Error: {e}")
+            st.error(f"{e}")
 
 # Run the app: streamlit run chatbot_app.py

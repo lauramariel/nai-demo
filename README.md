@@ -45,6 +45,27 @@ This is a demo application for Nutanix AI. Follow the instructions below to set 
       bash stop.sh local
       ```
 
+### Running an individual app without Docker
+
+1. Create and source venv
+
+   ```
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+2. Install requirements
+
+   ```
+   pip install -r requirements.txt
+   ```
+
+3. Run an app
+
+   ```
+   cd <appdir>
+   streamlit run <pythonfile> (e.g. app.py, src/main.py, etc)
+   ```
+
 ## Running on Linux
 
 ### Linux Requirements (Ubuntu)
@@ -105,3 +126,4 @@ To stop the application run
 ```bash
 bash stop.sh [local|prod]
 ```
+
