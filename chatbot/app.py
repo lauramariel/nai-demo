@@ -85,22 +85,21 @@ else:  # Unified Endpoints
     model_name = st.sidebar.text_input('Endpoint Name', value=config('ENDPOINT_NAME', default=''))
     api_endpoint = api_endpoint.rstrip('/v1/') + '/gateway/v1' # for unified endpoints, change endpoint from /enterpriseai/v1 to /enterpriseai/gateway/v1
 
+with st.sidebar.expander("🛠️ Advanced Options"):
+        temperature = st.slider(
+            "Select Temperature:",
+            min_value=0.0,
+            max_value=1.0,
+            value=0.7,
+            step=0.1
+        )
 
-temperature = st.sidebar.slider(
-    "Select Temperature for Chatbot:",
-    min_value=0.0,
-    max_value=1.0,
-    value=0.7,
-    step=0.1
-)
-
-option = st.sidebar.selectbox(
-    "Choose a system mode:",
-    list(system_messages.keys()),
-    index=0
-)
-
-system_message = st.sidebar.text_area("System Message", value=system_messages.get(option))
+        option = st.selectbox(
+            "Choose a system mode:",
+            list(system_messages.keys()),
+            index=0
+        )
+        system_message = st.text_area("System Message", value=system_messages.get(option))
 
 # Clear chat button
 if st.sidebar.button("Clear Chat"):
@@ -137,10 +136,28 @@ for message in st.session_state.messages:
 
 # Chat input - only enable if required fields are valid
 if required_fields_valid:
-    if prompt := st.chat_input("You:"):
-        st.session_state.messages.append({"role": "user", "content": prompt})
+    # 1. Update the input to accept files
+    # Use accept_file="multiple" if you want more than one at a time
+    prompt = st.chat_input("You:", accept_file=True)
+
+    if prompt:
+        # Initialize content for session state
+        user_content = prompt.text
+
+        # 2. Check if a file was uploaded
+        if prompt.files:
+            for file in prompt.files:
+                # Handle your 15KB text file
+                file_text = file.getvalue().decode("utf-8")
+                # Append the file content to the hidden prompt for the LLM
+                user_content += f"\n\n[Attached File: {file.name}]\n{file_text}"
+
+        # 3. Save and display
+        st.session_state.messages.append({"role": "user", "content": user_content})
+
         with st.chat_message("user"):
-            st.markdown(prompt)
+            # Display the text the user actually typed
+            st.markdown(prompt.text if prompt.text else f"📁 {prompt.files[0].name}")
 
         try:
             # Initialize ChatOpenAI and memory
@@ -161,9 +178,27 @@ if required_fields_valid:
                 stream_handler = StreamHandler(st.empty())
                 response = llm.invoke(messages, config={"callbacks": [stream_handler]})
                 st.session_state.messages.append({"role": "assistant", "content": response.content})
+
+                response_metadata = response.response_metadata
+                model_used = response_metadata.get("model_name", "Unknown Model")
+
+                usage_metadata = response.usage_metadata
+                input_tokens = usage_metadata.get("input_tokens", "Unknown")
+                output_tokens = usage_metadata.get("output_tokens", "Unknown")
+                total_tokens = usage_metadata.get("total_tokens", "Unknown")
+
+                # Create a nice little info row
+                st.divider()
+                # Use 4 columns to space everything out perfectly on one line
+                c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
+
+                c1.caption(f"**Model Used:** {model_used}")
+                c2.caption(f"**Input Tokens:** {input_tokens}")
+                c3.caption(f"**Output Tokens:** {output_tokens}")
+                c4.caption(f"**Total Tokens:** {total_tokens}")
         
         except Exception as e:
-            st.error("An error occurred while connecting to the API. Please check your API endpoint and credentials.")
+            #st.error("An error occurred while connecting to the API. Please check your API endpoint and credentials.")
             # Optionally log the error for debugging purposes
             st.error(f"{e}")
 
