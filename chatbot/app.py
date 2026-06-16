@@ -177,26 +177,34 @@ if required_fields_valid:
             with st.chat_message("assistant"):
                 stream_handler = StreamHandler(st.empty())
                 response = llm.invoke(messages, config={"callbacks": [stream_handler]})
+                print(response)
                 st.session_state.messages.append({"role": "assistant", "content": response.content})
 
-                response_metadata = response.response_metadata
-                model_used = response_metadata.get("model_name", "Unknown Model")
+                # Create a nice little info row only for Unified Endpoints
+                # usage_metadata doesn't seem to exist for Local Endpoints and Model Name is already obvious
+                if connection_type == "Unified Endpoints":
 
-                usage_metadata = response.usage_metadata
-                input_tokens = usage_metadata.get("input_tokens", "Unknown")
-                output_tokens = usage_metadata.get("output_tokens", "Unknown")
-                total_tokens = usage_metadata.get("total_tokens", "Unknown")
+                    response_metadata = response.response_metadata
+                    print(f"Response metadata: {response_metadata}")
+                    if response_metadata:
+                        model_used = response_metadata.get("model_name", "Unknown Model")
+                    usage_metadata = response.usage_metadata
+                    print(f"Usage metadata: {usage_metadata}")
+                    if usage_metadata:
+                        input_tokens = usage_metadata.get("input_tokens", "Unknown")
+                        output_tokens = usage_metadata.get("output_tokens", "Unknown")
+                        total_tokens = usage_metadata.get("total_tokens", "Unknown")
 
-                # Create a nice little info row
-                st.divider()
-                # Use 4 columns to space everything out perfectly on one line
-                c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
+                    st.divider()
+                    # Use 4 columns to space everything out perfectly on one line
+                    c1, c2, c3, c4 = st.columns([2, 1, 1, 1])
 
-                c1.caption(f"**Model Used:** {model_used}")
-                c2.caption(f"**Input Tokens:** {input_tokens}")
-                c3.caption(f"**Output Tokens:** {output_tokens}")
-                c4.caption(f"**Total Tokens:** {total_tokens}")
-        
+                    c1.caption(f"**Model Used:** {model_used}")
+                    if usage_metadata:
+                        c2.caption(f"**Input Tokens:** {input_tokens}")
+                        c3.caption(f"**Output Tokens:** {output_tokens}")
+                        c4.caption(f"**Total Tokens:** {total_tokens}")
+
         except Exception as e:
             #st.error("An error occurred while connecting to the API. Please check your API endpoint and credentials.")
             # Optionally log the error for debugging purposes
