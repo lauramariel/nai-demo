@@ -9,7 +9,6 @@ from decouple import config
 logging.basicConfig(level=config('LOG_LEVEL', default='INFO'))
 logger = logging.getLogger(__name__)
 
-
 def fetch_available_models(api_endpoint, api_key):
     """Fetch available models from the OpenAI endpoint"""
     try:
@@ -19,15 +18,18 @@ def fetch_available_models(api_endpoint, api_key):
         }
         
         # Construct the models endpoint URL
+        print(api_endpoint)
         if api_endpoint.endswith('/'):
             models_url = f"{api_endpoint}models"
         else:
             models_url = f"{api_endpoint}/models"
         
+        print(models_url)
         response = requests.get(models_url, headers=headers, timeout=10)
         
         if response.status_code == 200:
             data = response.json()
+            print(data)
             models = [model['id'] for model in data.get('data', [])]
             # Sort models alphabetically for better UX
             models.sort()

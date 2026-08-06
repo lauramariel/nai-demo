@@ -25,65 +25,69 @@ api_endpoint = st.sidebar.text_input('API Endpoint URL', value=config('API_ENDPO
 
 # Clean up API endpoint - remove /chat/completions if present
 if api_endpoint and api_endpoint.endswith('/chat/completions'):
+    print(f"Original API Endpoint: {api_endpoint}")
     api_endpoint = api_endpoint[:-len('/chat/completions')]
+
+print(f"API Endpoint: {api_endpoint}")
 
 api_key = st.sidebar.text_input('API Key', type='password', value=config('API_KEY', default=''))
 
-connection_type = st.sidebar.selectbox(
-    "Connection Type:",
-    ["Local Models", "Unified Endpoints"],
-    index=0
-)
+# connection_type = st.sidebar.selectbox(
+#     "Connection Type:",
+#     ["Local Models", "Unified Endpoints"],
+#     index=1
+# )
 
-if connection_type == "Local Models":
+# if connection_type == "Local Models":
     # Dynamic model selection with API integration
-    if api_endpoint and api_key:
-        # Initialize session state for cached models
-        if 'cached_models' not in st.session_state:
-            st.session_state.cached_models = []
-            st.session_state.models_fetched = False
-            st.session_state.last_endpoint = ""
-            st.session_state.last_api_key = ""
+if api_endpoint and api_key:
+    # Initialize session state for cached models
+    if 'cached_models' not in st.session_state:
+        st.session_state.cached_models = []
+        st.session_state.models_fetched = False
+        st.session_state.last_endpoint = ""
+        st.session_state.last_api_key = ""
 
-        # Check if we need to refresh models (endpoint or key changed)
-        if (st.session_state.last_endpoint != api_endpoint or
-            st.session_state.last_api_key != api_key or
-            not st.session_state.models_fetched):
+    # Check if we need to refresh models (endpoint or key changed)
+    if (st.session_state.last_endpoint != api_endpoint or
+        st.session_state.last_api_key != api_key or
+        not st.session_state.models_fetched):
 
-            with st.sidebar:
-                with st.spinner("Fetching available models..."):
-                    st.session_state.cached_models = fetch_available_models(api_endpoint, api_key)
-                    st.session_state.models_fetched = True
-                    st.session_state.last_endpoint = api_endpoint
-                    st.session_state.last_api_key = api_key
+        with st.sidebar:
+            with st.spinner("Fetching available models..."):
+                st.session_state.cached_models = fetch_available_models(api_endpoint, api_key)
+                st.session_state.models_fetched = True
+                st.session_state.last_endpoint = api_endpoint
+                st.session_state.last_api_key = api_key
 
-        # Use available models or fallback to default
-        available_models = st.session_state.cached_models
-        if available_models:
-            # Default selection
-            default_model = config('MODEL_NAME', default='llama-vision-llama-3-1')
-            default_index = 0
-            if default_model in available_models:
-                default_index = available_models.index(default_model)
+    # Use available models or fallback to default
+    available_models = st.session_state.cached_models
+    if available_models:
+        # Default selection
+        default_model = config('MODEL_NAME', default='llama-vision-llama-3-1')
+        default_index = 0
+        if default_model in available_models:
+            default_index = available_models.index(default_model)
 
-            # Model selection dropdown
-            model_name = st.sidebar.selectbox(
-                "Select Local Endpoint:",
-                options=available_models,
-                index=default_index,
-                help="Choose from available endpoints"
-            )
-        else:
-            st.sidebar.warning("No local models found. Please check your API credentials.")
-            model_name = config('MODEL_NAME', default='llama-vision-llama-3-1')
+        # Model selection dropdown
+        model_name = st.sidebar.selectbox(
+            "Select Endpoint:",
+            options=available_models,
+            index=default_index,
+            help="Choose from available endpoints"
+        )
     else:
-        # Fallback when API credentials are not available
-        st.sidebar.info("💡 Provide API Endpoint and API Key above to see available models")
+        st.sidebar.warning("No models found. Please check your API credentials.")
         model_name = config('MODEL_NAME', default='llama-vision-llama-3-1')
+else:
+    # Fallback when API credentials are not available
+    st.sidebar.info("💡 Provide API Endpoint and API Key above to see available models")
+    model_name = config('MODEL_NAME', default='llama-vision-llama-3-1')
 
-else:  # Unified Endpoints
-    model_name = st.sidebar.text_input('Endpoint Name', value=config('ENDPOINT_NAME', default=''))
-    api_endpoint = api_endpoint.rstrip('/v1/') + '/gateway/v1' # for unified endpoints, change endpoint from /enterpriseai/v1 to /enterpriseai/gateway/v1
+# else:  # Unified Endpoints
+#     model_name = st.sidebar.text_input('Endpoint Name', value=config('ENDPOINT_NAME', default=''))
+#     #api_endpoint = api_endpoint.rstrip('/v1/') + '/gateway/v1' # for unified endpoints, change endpoint from /enterpriseai/v1 to /enterpriseai/gateway/v1
+#     print(f"API Endpoint: {api_endpoint}")
 
 with st.sidebar.expander("🛠️ Advanced Options"):
         temperature = st.slider(
@@ -177,13 +181,12 @@ if required_fields_valid:
             with st.chat_message("assistant"):
                 stream_handler = StreamHandler(st.empty())
                 response = llm.invoke(messages, config={"callbacks": [stream_handler]})
-                print(response)
+                print(f"Response: {response}")
                 st.session_state.messages.append({"role": "assistant", "content": response.content})
 
                 # Create a nice little info row only for Unified Endpoints
                 # usage_metadata doesn't seem to exist for Local Endpoints and Model Name is already obvious
-                if connection_type == "Unified Endpoints":
-
+                if "/gateway/v1" in api_endpoint:
                     response_metadata = response.response_metadata
                     print(f"Response metadata: {response_metadata}")
                     if response_metadata:
